@@ -1,14 +1,10 @@
 ﻿using System;
-using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using FunctionsBugRepro.Dependency;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace FunctionsBugRepro.Functions
 {
@@ -26,15 +22,17 @@ namespace FunctionsBugRepro.Functions
                    ?? throw new ArgumentNullException("Failed to create a logger");
         }
         
-        [FunctionName("TestFunction")]
-        public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "test")] HttpRequest req)
+        [Function("TestFunction")]
+        public async Task<HttpResponseData> RunAsync(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "test")] HttpRequestData req)
         {
             _log.LogInformation("C# HTTP trigger function processed a request");
 
             await Task.Delay(TimeSpan.FromMilliseconds(100));
 
-            return new OkObjectResult($"Result: {_dependency.GetRandomNumber()}");
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteStringAsync($"Result: {_dependency.GetRandomNumber()}");
+            return response;
 
         }
     }
