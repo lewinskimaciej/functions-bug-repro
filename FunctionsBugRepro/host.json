@@ -1,0 +1,21 @@
+{
+    "version": "2.0",
+    "logging": {
+        "applicationInsights": {
+            "samplingSettings" : {
+                "excludedTypes": "Request",
+                "isEnabled": true
+            }
+        },
+        "fileLoggingMode": "always",
+        "logLevel": {
+            "Default": "Information",
+            "System": "Information",
+            "Microsoft": "Information",
+            "Host.Results": "Information",
+            "Function": "Information",
+            "Host.Aggregator": "Information"
+        }
+    },
+    "functions":[]
+}
